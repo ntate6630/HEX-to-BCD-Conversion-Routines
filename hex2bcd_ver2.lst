@@ -1,0 +1,74 @@
+---------------------------------------------
+Z80 ASSEMBLER LISTING
+Line   Addr Opcode      Label   Instruction
+---------------------------------------------
+0001   0000             ; HEX to BCD conversion
+0002   0000             
+0003   0000 3E 00       INIT:	LD	A,	0X00		; High byte.
+0004   0002 32 01 19    	LD	(0X1901),	A
+0005   0005 3E FF       	LD	A,	0Xff		; Low byte.
+0006   0007 32 00 19    	LD	(0X1900),	A	; Loads HL with source bytes.
+0007   000A             
+0008   000A             START:
+0009   000A 11 00 00    	LD	DE,	0X0000		; Destination
+0010   000D 06 10       	LD	B,	0X10		; Counter.
+0011   000F 2A 00 19    	LD	HL,	(0x1900)	; Source bytes.
+0012   0012             LOOP:
+0013   0012 CB 25       	SLA	L		; [CARRY] <<<<<<<< - 0
+0014   0014 CB 14       	RL	H		; <<<<<<<< - [CARRY]
+0015   0016 CB 12       	RL	D		; <<<<<<<< - [CARRY]
+0016   0018 CB 13       	RL	E		; <<<<<<<< - [CARRY]
+0017   001A             
+0018   001A 05          	DEC	B
+0019   001B 28 2A       	JR	Z,	EXIT	; Exit when done.
+0020   001D             
+0021   001D 7A          	LD	A,	D
+0022   001E E6 0F       	AND	0X0F
+0023   0020 D6 05       	SUB	0X05
+0024   0022 38 0D       	JR	C,	SKIP1	; Skip if low nibble less than 5.
+0025   0024             ONES_ADD_3:
+0026   0024 7A          	LD	A,	D
+0027   0025 E6 0F       	AND	0X0F		; Mask off high nibble.
+0028   0027 C6 03       	ADD	A,	0X03	; Add 3 to low nibble.
+0029   0029             
+0030   0029 08          	EX	AF,	AF'
+0031   002A 7A          	LD	A,	D
+0032   002B E6 F0       	AND	0XF0
+0033   002D 57          	LD	D,	A
+0034   002E 08          	EX	AF,	AF'
+0035   002F B2          	OR	D		; Combine high and low nibbles again.
+0036   0030 57          	LD	D,	A
+0037   0031             SKIP1:
+0038   0031             
+0039   0031             
+0040   0031             
+0041   0031 7A          		LD	A,	D
+0042   0032 E6 F0       	AND	0XF0
+0043   0034 D6 50       	SUB	0X50
+0044   0036 38 0D       	JR	C,	SKIP2	; Skip if high nibble less than 5.
+0045   0038             TENS_ADD_3:
+0046   0038 7A          	LD	A,	D
+0047   0039 E6 F0       	AND	0XF0		; Mask off low nibble.
+0048   003B C6 30       	ADD	A,	0X30	; Add 0x30 to high nibble.
+0049   003D             
+0050   003D 08          	EX	AF,	AF'
+0051   003E 7A          	LD	A,	D
+0052   003F E6 0F       	AND	0X0F
+0053   0041 57          	LD	D,	A
+0054   0042 08          	EX	AF,	AF'
+0055   0043 B2          	OR	D		; Combine high and low nibbles again.
+0056   0044 57          	LD	D,	A
+0057   0045             SKIP2:
+0058   0045             
+0059   0045             
+0060   0045             
+0061   0045 18 CB       	JR	LOOP
+0062   0047             EXIT:
+0063   0047 76          	HALT
+0064   0048             
+0065   0048             
+0066   0048             
+0067   0048             
+0068   0048             
+0069   0048             
+Number of errors = 0
